@@ -964,41 +964,90 @@ SIMULATE_BUTTON_PRESSES::
 
 
 USELESS_FUNCTION::
-	ldh a, [rDEMO_GAME]
-	and a
-	ret z				; return if NOT demo mode
+	;ldh a, [rDEMO_GAME]
+	;and a
+	;ret nz				; return if demo mode
 	
-	ldh a, [rUNUSED]
-	cp $ff
-	ret nz				; always true - always return
+    ;ld a, [rBLOCK_STATUS]
+    ;cp 2
+    ;ret nz
+    ld a, [rBLOCK_VISIBILITY]
+    ;cp $82
+    ;jr z, .go
+    cp $80
+    ret nz
+    ;inc a
+    ;ld [rBLOCK_VISIBILITY], a
+.go
+	jp func_0c8c
+
+    ret
+
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+
 
 ; function never executed:
-	ldh a, [rBUTTON_DOWN]
-	ld b, a
-	ldh a, [rDEMO_BUTTON_HIT]
-	cp b
-	jr z, l_05ad
-	
-	ldh a, [rDEMO_STORYBOARD_1]
-	ld h, a
-	ldh a, [rDEMO_STORYBOARD_2]
-	ld l, a
-	
-	ldh a, [rDEMO_BUTTON_HIT]
-	ldi [hl], a
-	ldh a, [rDEMO_ACTION_COUNTDOWN]
-	ldi [hl], a
-	
-	ld a, h
-	ldh [rDEMO_STORYBOARD_1], a
-	ld a, l
-	ldh [rDEMO_STORYBOARD_2], a
-	ld a, b
-	ldh [rDEMO_BUTTON_HIT], a
-	
-	xor a
-	ldh [rDEMO_ACTION_COUNTDOWN], a
-	ret
+	;ldh a, [rBUTTON_DOWN]
+	;ld b, a
+	;ldh a, [rDEMO_BUTTON_HIT]
+	;cp b
+	;jr z, l_05ad
+
+	;ldh a, [rDEMO_STORYBOARD_1]
+	;ld h, a
+	;ldh a, [rDEMO_STORYBOARD_2]
+	;ld l, a
+
+	;ldh a, [rDEMO_BUTTON_HIT]
+	;ldi [hl], a
+	;ldh a, [rDEMO_ACTION_COUNTDOWN]
+	;ldi [hl], a
+
+	;ld a, h
+	;ldh [rDEMO_STORYBOARD_1], a
+	;ld a, l
+	;ldh [rDEMO_STORYBOARD_2], a
+	;ld a, b
+	;ldh [rDEMO_BUTTON_HIT], a
+
+	;xor a
+	;ldh [rDEMO_ACTION_COUNTDOWN], a
+	;ret
 
 l_05ad:
 	ldh a, [rDEMO_ACTION_COUNTDOWN]
@@ -3508,7 +3557,8 @@ l_1521:
 	ld hl, $ffc0
 	ld a, [hl]
 	bit 3, b
-	jr nz, l_1563
+	; AP always skip
+	jr l_1563
 	bit 0, b
 	jr nz, l_1577
 	inc e
@@ -3600,7 +3650,8 @@ l_15bc:
 	ld hl, $ffc2
 	ld a, $0a
 	bit 3, b
-	jr nz, l_15bc
+	; AP always skip
+	jr l_15bc
 	bit 0, b
 	jr nz, l_15bc
 	ld a, $08
@@ -4547,14 +4598,19 @@ l_1af9:
 	ld e, a
 
 l_1afa:
-	ld hl, $1b06
-	ld d, $00
-	add hl, de
-	ld a, [hl]
+	;ld hl, $1b06
+	;ld d, $00
+	;add hl, de
+	;ld a, [hl]
+	ld a, $34
 	ldh [rGRAVITY], a
 	ldh [$ff00 + $9a], a
 	ret
-	
+	nop
+	nop
+	nop
+	nop
+	nop
 	db $34, $30, $2C, $28, $24, $20, $1B, $15, $10, $0A, $09, $08
 	db $07, $06, $05, $05, $04, $04, $03, $03, $02
 
@@ -4696,7 +4752,7 @@ lbl_MENU_IN_GAME::
 	ldh a, [rPAUSE_MENU]
 	and a
 	ret nz				; return if in pause menu
-	
+
 	call CHECK_DEMO_GAME_FINISHED
 	call SIMULATE_BUTTON_PRESSES
 	call USELESS_FUNCTION		; does nothing b/c depending on unused variable
@@ -5341,7 +5397,8 @@ func_1f91:
 
 l_1fc3:
 	ld [hl], $00
-	ldh a, [$ff00 + $a9]
+	; AP score multiplier
+	ld a, 0
 	ld b, a
 	inc b
 
