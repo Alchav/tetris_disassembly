@@ -4602,6 +4602,7 @@ l_1afa:
 	;ld d, $00
 	;add hl, de
 	;ld a, [hl]
+	; AP speed multiplier
 	ld a, $34
 	ldh [rGRAVITY], a
 	ldh [$ff00 + $9a], a
