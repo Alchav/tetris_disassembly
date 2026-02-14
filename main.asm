@@ -178,7 +178,7 @@ SECTION "Header", ROM0 [$104]
 	db $00		;ram size: 0 b
 	db $00		;destination code: japanese
 	db $01		;old license: not sgb compatible
-	db $01		;mask rom version number
+	db $AC		;mask rom version number
 	db $0a		;header check [ok]
 	db $16, $bf		;global check [ok]
 
