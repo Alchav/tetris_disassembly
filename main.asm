@@ -4767,7 +4767,7 @@ lbl_MENU_IN_GAME::
 
 toggle_next_block_hidden:
 	bit 2, a
-	ret z
+	ret
 	ld a, [rHIDE_NEXT_BLOCK]
 	xor $01
 	ld [rHIDE_NEXT_BLOCK], a
