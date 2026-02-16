@@ -964,60 +964,24 @@ SIMULATE_BUTTON_PRESSES::
 
 
 USELESS_FUNCTION::
-	;ldh a, [rDEMO_GAME]
-	;and a
-	;ret nz				; return if demo mode
-	
-    ;ld a, [rBLOCK_STATUS]
+
+
+    ;ld a, [rBLOCK_VISIBILITY]
+
+    ;cp $80
+
+    ;ret nz
+
+
+
+    ;ldh a, [rROW_UPDATE]
+    ;and a
+    ;ret nz
+    ;ldh a, [rBLOCK_STATUS]
     ;cp 2
     ;ret nz
-    ld a, [rBLOCK_VISIBILITY]
-    ;cp $82
-    ;jr z, .go
-    cp $80
-    ret nz
-    ;inc a
-    ;ld [rBLOCK_VISIBILITY], a
-.go
 	jp func_0c8c
 
-    ret
-
-
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
 
 
 
@@ -1049,6 +1013,8 @@ USELESS_FUNCTION::
 	;ldh [rDEMO_ACTION_COUNTDOWN], a
 	;ret
 
+
+SECTION "l_05ad", ROM0 [$05ad]
 l_05ad:
 	ldh a, [rDEMO_ACTION_COUNTDOWN]
 	inc a
