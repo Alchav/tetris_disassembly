@@ -966,12 +966,12 @@ SIMULATE_BUTTON_PRESSES::
 USELESS_FUNCTION::
 
 
-    ;ld a, [rBLOCK_VISIBILITY]
+    ld a, [rBLOCK_VISIBILITY]
 
-    ;cp $80
+    cp $80
 
-    ;ret nz
-
+    ret nz
+    jp func_2007
 
 
     ;ldh a, [rROW_UPDATE]
@@ -980,7 +980,8 @@ USELESS_FUNCTION::
     ;ldh a, [rBLOCK_STATUS]
     ;cp 2
     ;ret nz
-	jp func_0c8c
+    ;call func_0bf0
+	;jp func_0c8c
 
 
 
@@ -1150,6 +1151,7 @@ l_0670:
 	ld hl, $ff02
 	set 7, [hl]
 	jr l_0696
+	;MENU_VS_INIT
 	ld a, $03
 	ldh [$ff00 + $cd], a
 	ldh a, [$ff00 + $cb]
@@ -4248,6 +4250,7 @@ l_1909:
 	dec c
 	jr nz, l_1906
 	ret
+    ;  MENU_HISCORE
 	ldh a, [$ff00 + $c8]
 	ld hl, $99e4
 	ld de, $ffe0
@@ -4734,7 +4737,7 @@ lbl_MENU_IN_GAME::
 	call func_25a1 ; check if rBLOCK_STATUS is $01 and do stuff if it is
 	call func_224d ; check if rCOUNTDOWN is $00 and rROW_UPDATE is $01 and do stuff if they are
 	call func_1f91 ; check if $ff00 is $37 and rROW_UPDATE is $05 and do stuff if they are
-	call USELESS_FUNCTION		; does nothing b/c depending on unused variable
+	call func_0c8c		; 1P garbage
 	call RESTORE_BUTTON_PRESSES
 	ret
 
@@ -5450,7 +5453,9 @@ func_2007:
 	jr nz, l_2024
 	ldh a, [rPLAYERS]
 	and a
-	jr z, l_2041
+	;jr z, l_2041
+	nop
+	nop
 l_2024:
 	ld h, $c3
 	ldh a, [rDEMO_STATUS]
@@ -6182,7 +6187,7 @@ l_2428:
 	ret
 
 l_242b:
-	call func_2007
+	call USELESS_FUNCTION
 	ret
 
 l_242f:
