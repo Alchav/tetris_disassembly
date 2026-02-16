@@ -1472,6 +1472,8 @@ l_08a4:
 	db $20, $8C, $C1, $20, $18, $84, $AE, $00, $18, $8C, $AE, $20
 	db $20, $84, $AF, $00, $20, $8C, $AF
 
+; begin VS mode code
+
 	jr nz, l_0923
 	ld [$ffe0], sp
 	xor a
@@ -1838,6 +1840,8 @@ l_0ac9:
 	pop bc
 	pop hl
 	ret
+	;???
+l_0ad2:
 	ld a, $01
 	ldh [$ff00 + $ff], a
 	ldh a, [rROW_UPDATE]
@@ -1848,7 +1852,7 @@ l_0ac9:
 	call func_113f
 	ld a, $02
 	ldh [$ff00 + $cd], a
-	ld a, [$c0de]
+	ld a, [rHIDE_NEXT_BLOCK]
 	and a
 	jr z, l_0af1
 	ld a, $80
@@ -1900,6 +1904,8 @@ l_0b2a:
 	ld a, $03
 	ldh [rREQUEST_SERIAL_TRANSFER], a
 	ret
+	;VS MODE
+l_0b31:
 	ld a, $01
 	ldh [$ff00 + $ff], a
 	ld hl, $c09c
@@ -4711,7 +4717,7 @@ l_1bc8:
 	cp $2c
 	jr nz, l_1bc2
 	ret
-	
+
 SECTION "MENU_IN_GAME", ROM0 [$1BCE]
 lbl_MENU_IN_GAME::
 	call START_SELECT_HANDLER	; check if start or select was pressed
@@ -4722,13 +4728,13 @@ lbl_MENU_IN_GAME::
 
 	call CHECK_DEMO_GAME_FINISHED
 	call SIMULATE_BUTTON_PRESSES
+	call func_24bb ; check for a/b presses and handle rotations
+	call func_209c ; check for holding down to drop piece faster
+	call func_213e ; check if rBLOCK_STATUS is $02 and do stuff if it is
+	call func_25a1 ; check if rBLOCK_STATUS is $01 and do stuff if it is
+	call func_224d ; check if rCOUNTDOWN is $00 and rROW_UPDATE is $01 and do stuff if they are
+	call func_1f91 ; check if $ff00 is $37 and rROW_UPDATE is $05 and do stuff if they are
 	call USELESS_FUNCTION		; does nothing b/c depending on unused variable
-	call func_24bb
-	call func_209c
-	call func_213e
-	call func_25a1
-	call func_224d
-	call func_1f91
 	call RESTORE_BUTTON_PRESSES
 	ret
 
