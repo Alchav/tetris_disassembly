@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 Compare tetris_orig.gb vs tetris.gb and emit patch chunks as tuples:
 (address, "System Bus", [int, int, ...])
@@ -20,7 +20,7 @@ def build_patch(orig: bytes, mod: bytes) -> List[Tuple[int, str, List[int]]]:
     patch: List[Tuple[int, str, List[int]]] = []
 
     min_len = min(len(orig), len(mod))
-    i = 0
+    i = 0x100
 
     # Differences within overlapping portion
     while i < min_len:
@@ -68,9 +68,6 @@ def main() -> int:
     patch = build_patch(orig, mod)
 
     with open(args.out, "w", encoding="utf-8") as f:
-        f.write("# Auto-generated patch data\n")
-        f.write(f"# orig: {os.path.basename(args.orig)} ({len(orig)} bytes)\n")
-        f.write(f"# mod : {os.path.basename(args.mod)} ({len(mod)} bytes)\n\n")
         f.write("PATCH = [\n")
         for address, domain, values in patch:
             f.write(f"    (0x{address:x}, {values}, {domain!r}),\n")

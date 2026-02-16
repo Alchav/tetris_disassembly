@@ -4743,6 +4743,7 @@ lbl_MENU_IN_GAME::
 
 toggle_next_block_hidden:
 	bit 2, a
+	; AP forbid toggle
 	ret
 	ld a, [rHIDE_NEXT_BLOCK]
 	xor $01
@@ -5448,14 +5449,20 @@ func_2007:
 	ld [hl], a
 	and $fc
 	ld c, a
+
+	ldh a, [$ff00 + $d3]
+	and a
+	jr z, .noArm
+	or $80
+	ldh [$ff00 + $d3], a
+.noArm
+
 	ldh a, [rDEMO_GAME]
 	and a
 	jr nz, l_2024
 	ldh a, [rPLAYERS]
 	and a
-	;jr z, l_2041
-	nop
-	nop
+	jr z, l_2041
 l_2024:
 	ld h, $c3
 	ldh a, [rDEMO_STATUS]
@@ -5469,11 +5476,7 @@ l_2024:
 l_2033:
 	ld a, l
 	ldh [rDEMO_STATUS], a
-	ldh a, [$ff00 + $d3]
-	and a
-	jr z, l_2065
-	or $80
-	ldh [$ff00 + $d3], a
+
 	jr l_2065
 l_2041:
 	ld h, $03
