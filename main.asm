@@ -646,7 +646,7 @@ l_03e9:
 	ld hl, $c000		; Address of OAM data
 	ld [hl], $80		; Little arrow Y location
 	inc l
-	ld [hl], $10		; Little arrow X location
+	ld [hl], $28		; Little arrow X location
 	inc l
 	ld [hl], $58		; Little arrow tile address
 	ld a, $03
@@ -730,8 +730,8 @@ PLAY_DEMO_GAME:
 	ld a, LCDC_STANDARD
 	ldh [rLCDC], a
 	ret
-	
-	
+
+
 func_0474: 	; not used function
 	ld a, $ff
 	ldh [rUNUSED], a
@@ -751,7 +751,7 @@ lbl_MENU_TITLE::
 	
 .skip_still_no_demo:
 	call WASTE_TIME
-	
+
 	ld a, $55		; Something Serial Data related
 	ldh [rSB], a
 	ld a, $80
@@ -831,7 +831,8 @@ first_player_selected:
 	jr l_04d9
 
 MENU_TITLE_SELECT_BTN:
-	xor $01		; toggles rPLAYERS value (i.e. 0 -> 1 and 1 -> 0)
+	ret
+	nop		; (patched) disable 2P toggle
 l_04f5:
 	ldh [rPLAYERS], a
 	
@@ -844,13 +845,13 @@ l_04f5:
 	ret
 
 MENU_TITLE_RIGHT_BTN:
-	and a
+	ret		; (patched) ignore Right on title menu
 	ret nz		; return if rPLAYERS = 1 (i.e. 2 players)
 	xor a
 	jr MENU_TITLE_SELECT_BTN
 
 MENU_TITLE_LEFT_BTN:
-	and a
+	ret		; (patched) ignore Left on title menu
 	ret z		; return if rPLAYERS = 0 (i.e. 1 player)
 l_0509:
 	xor a
@@ -5828,9 +5829,9 @@ clear_row_animation::
 	inc de
 	ld a, [de]				
 	ld l, a				; Get the first block's address' low byte
-	ldh a, [rCLEAR_PROGRESS]	
-	cp $06						
-	ld a, $8c			
+	ldh a, [rCLEAR_PROGRESS]
+	cp $06
+	ld a, $8c
 	jr nz, .dark_blocks		; if the clearing progress is in state 6 (= almost done)
 	ld a, $2f			; fill line with white blocks (tile 2f)
 .dark_blocks:				; otherwise use dark blocks (tile 8c)
@@ -7248,13 +7249,13 @@ l_2b48:
 	ldi [hl], a			
 	ldh a, [rOAM_TILE_NO]
 	ldi [hl], a
-	ldh a, [$ff00 + $94]		; 
-	ld b, a				; 
-	ldh a, [$ff00 + $8b]		; 
-	or b				; 
-	ld b, a				; 
-	ldh a, [rOAM_ATTRIBUTE_NO]		; 
-	or b				; "or" both 8b and 9f into the attribute 
+	ldh a, [$ff00 + $94]		;
+	ld b, a				;
+	ldh a, [$ff00 + $8b]		;
+	or b				;
+	ld b, a				;
+	ldh a, [rOAM_ATTRIBUTE_NO]		;
+	or b				; "or" both 8b and 9f into the attribute
 	ldi [hl], a
 	ld a, h
 	ldh [rOAM_TILE_ADDRESS_1], a
@@ -7262,7 +7263,7 @@ l_2b48:
 	ldh [rOAM_TILE_ADDRESS_2], a
 	pop hl
 	jp read_next_design_element
-	
+
 ; start of data section (see above): starting at $2b64
 SECTION "Data", ROM0 [$2B64]
 	db $20, $2C, $24, $2C, $28, $2C, $2C, $2C, $30, $2C, $34, $2C
@@ -7760,7 +7761,7 @@ SECTION "Data2", romx
 	db $46, $46, $46, $46, $4E, $3C, $00, $00, $46, $46, $46, $46
 	db $2C, $18, $00, $00, $46, $46, $56, $7E, $6E, $46, $00, $00
 	db $46, $2C, $18, $38, $64, $42, $00, $00, $66, $66, $3C, $18
-	db $18, $18, $00, $00, $7E, $0E, $1C, $38, $70, $7E, $00, $00	
+	db $18, $18, $00, $00, $7E, $0E, $1C, $38, $70, $7E, $00, $00
 	db $00, $00, $00, $00, $60, $60, $00, $00, $00, $00, $3C, $3C
 	db $00, $00, $00, $00, $00, $22, $14, $08, $14, $22, $00, $00
 	db $00, $36, $36, $5F, $49, $5F, $41, $7F, $41, $3E, $22, $1C
@@ -7975,9 +7976,9 @@ SECTION "Data2", romx
 	db $8C, $8C, $8C, $8C, $54, $55, $56, $57, $4E, $4F, $50, $51
 	db $52, $45, $8E, $41, $41, $41, $41, $41, $41, $41, $41, $41
 	db $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $2F
-	db $2F, $59, $19, $15, $0A, $22, $0E, $1B, $2F, $2F, $2F, $99
-	db $19, $15, $0A, $22, $0E, $1B, $2F, $2F, $2F, $9A, $9A, $9A
-	db $9A, $9A, $9A, $9A, $2F, $2F, $2F, $9A, $9A, $9A, $9A, $9A
+	db $2F, $2F, $2F, $2F, $0A, $1B, $0C, $11, $12, $19, $0E, $15
+	db $0A, $10, $18, $2F, $2F, $2F, $2F, $2F, $9A, $9A, $9A, $9A
+	db $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A
 	db $9A, $9A, $2F, $2F, $2F, $2F, $2F, $33, $30, $31, $32, $31
 	db $2F, $34, $35, $36, $37, $38, $39, $2F, $2F, $2F, $2F, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F
@@ -9082,5 +9083,5 @@ func_7ff0:
 
 Sound_Init::
 	jp $69a5
-	
+
 	db $00, $00, $00, $00, $00, $00, $00, $00, $00
