@@ -1248,7 +1248,7 @@ func_0725:
 	dec b
 	jr nz, func_0725
 	ret
-
+; MENU_VS_MODE
 	ldh a, [$ff00 + $cb]
 	cp $29
 	jr z, l_0755
