@@ -906,7 +906,7 @@ CHECK_DEMO_GAME_FINISHED::
 SIMULATE_BUTTON_PRESSES::
 	ldh a, [rDEMO_GAME]
 	and a
-	ret z			; return if NOT in demo mode
+	jp z, BUTTON_TRAP			; return if NOT in demo mode
 	
 	ldh a, [rUNUSED]
 	cp $ff
@@ -956,12 +956,6 @@ SIMULATE_BUTTON_PRESSES::
 	ldh [rBUTTON_DOWN], a		; replace them with the simulated buttons from the demo storyboard
 	ret
 
-; 057D - unused code
-	xor a
-	ldh [rDEMO_BUTTON_HIT], a
-	jr .clear_real_button_press
-	ret
-
 
 USELESS_FUNCTION::
 
@@ -972,17 +966,31 @@ USELESS_FUNCTION::
 
     ret nz
     jp func_2007
-
-
-    ;ldh a, [rROW_UPDATE]
-    ;and a
-    ;ret nz
-    ;ldh a, [rBLOCK_STATUS]
-    ;cp 2
-    ;ret nz
-    ;call func_0bf0
-	;jp func_0c8c
-
+BUTTON_TRAP:
+    ld a, [$cc00]
+    and a
+    ret z
+    dec a
+    ld [$cc00], a
+    and 1
+    ret nz
+    ldh a, [rDIV]
+    ;push af
+    ;and 16 + 32
+    ;cp 16 + 32
+    ;pop af
+    ;jr nz, .R
+    bit 3, a
+    jr z, .L
+    and 249 - 16
+    jr .R
+.L
+    and 249 - 32
+.R
+    and 249
+    ld [rBUTTON_HIT], a
+    ld [rBUTTON_DOWN], a
+    ret
 
 
 
@@ -1918,7 +1926,7 @@ l_0b31:
 	ld [hl], $27
 	inc l
 	ld [hl], $00
-	call START_SELECT_HANDLER
+	call START_SELECT_HANDLER_X
 	call func_1c88
 	call func_24bb
 	call func_209c
@@ -3444,28 +3452,28 @@ func_1492:
 	add a, b
 	ld [hl], a
 
-
+; MENU_SELECT_MUSIC
 func_14b0:
 	ld de, rBLOCK_VISIBILITY
 	call func_1766
 	ld hl, $ffc1
 	ld a, [hl]
-	bit 3, b
+	bit 3, b ; Start
 	jp nz, l_1563
-	bit 0, b
+	bit 0, b ; A
 	jp nz, l_1563
-	bit 1, b
+	bit 1, b ; B
 	jr nz, l_1509
 
 l_14c8:
 	inc e
-	bit 4, b
+	bit 4, b ; Right
 	jr nz, l_14f3
-	bit 5, b
+	bit 5, b ; Left
 	jr nz, l_14fe
-	bit 6, b
+	bit 6, b ; Up
 	jr nz, l_14eb
-	bit 7, b
+	bit 7, b ; Down
 	jp z, l_155f
 	cp $1e
 	jr nc, l_14e7
@@ -4582,13 +4590,15 @@ l_1afa:
 	ldh [rGRAVITY], a
 	ldh [$ff00 + $9a], a
 	ret
-	nop
-	nop
-	nop
-	nop
-	nop
-	db $34, $30, $2C, $28, $24, $20, $1B, $15, $10, $0A, $09, $08
-	db $07, $06, $05, $05, $04, $04, $03, $03, $02
+	START_SELECT_HANDLER_X:
+
+    ld a, [$cc00]
+    and a
+    ret nz
+    jp START_SELECT_HANDLER
+
+	;db $34, $30, $2C, $28, $24, $20, $1B, $15, $10, $0A, $09, $08
+	;db $07, $06, $05, $05, $04, $04, $03, $03, $02
 
 func_1b1b:
 	ld hl, $99c2
@@ -4723,7 +4733,7 @@ l_1bc8:
 
 SECTION "MENU_IN_GAME", ROM0 [$1BCE]
 lbl_MENU_IN_GAME::
-	call START_SELECT_HANDLER	; check if start or select was pressed
+	call START_SELECT_HANDLER_X	; check if start or select was pressed
 	
 	ldh a, [rPAUSE_MENU]
 	and a
