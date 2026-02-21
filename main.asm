@@ -744,8 +744,10 @@ lbl_MENU_TITLE::
 	jr nz, .skip_still_no_demo
 	ld hl, rMUSIC_COUNTDOWN
 	dec [hl]
-	jr z, PLAY_DEMO_GAME
-	
+	;jr z, PLAY_DEMO_GAME
+	nop
+	nop
+
 	ld a, $7d		; ~ 2 seconds
 	ldh [rCOUNTDOWN], a
 	
@@ -3541,7 +3543,8 @@ l_1521:
 	ld a, [hl]
 	bit 3, b
 	; AP always skip
-	jr l_1563
+	;jr l_1563
+		jr nz, l_1563
 	bit 0, b
 	jr nz, l_1577
 	inc e
@@ -3634,7 +3637,8 @@ l_15bc:
 	ld a, $0a
 	bit 3, b
 	; AP always skip
-	jr l_15bc
+	;jr l_15bc
+	jr nz, l_15bc
 	bit 0, b
 	jr nz, l_15bc
 	ld a, $08
