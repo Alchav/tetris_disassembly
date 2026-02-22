@@ -515,9 +515,11 @@ State_Machine::
 	db $c0, $1d	; MENU_SCORE_B		=> 1dc0
 	db $16, $1f	; (unknown) 		=> 1f16
 	db $1f, $1f	; MENU_LOST_ANIM	=> 1f1f
-	db $25, $15	; MENU_SELECT_TYPE	=> 1525
+	;db $25, $15	; MENU_SELECT_TYPE	=> 1525
+	db $b0, $14	; MENU_SELECT_MUSIC	=> 14b0
 	db $b0, $14	; MENU_SELECT_MUSIC	=> 14b0
 	db $7b, $15	; MENU_LEVEL_A_INIT	=> 157b
+	;db $bf, $15	; MENU_LEVEL_A		=> 15bf
 	db $bf, $15	; MENU_LEVEL_A		=> 15bf
 	db $29, $16	; MENU_LEVEL_B_INIT	=> 1629
 	db $7a, $16	; MENU_LEVEL_B		=> 167a
@@ -644,7 +646,7 @@ l_03e9:
 	call COPY_TILEMAP
 	call CLEAR_OAM_DATA
 	ld hl, $c000		; Address of OAM data
-	ld [hl], $80		; Little arrow Y location
+	ld [hl], $90		; Little arrow Y location
 	inc l
 	ld [hl], $28		; Little arrow X location
 	inc l
@@ -3383,6 +3385,8 @@ func_1437:
 	dec b
 	jr nz, $1437
 	ret
+
+;MENU_SELECT_TYPE_INIT
 	ld a, $01
 	ldh [$ff00 + $ff], a
 	xor a
@@ -3398,6 +3402,7 @@ func_144f:
 	call COPY_TILEMAP
 	call CLEAR_OAM_DATA
 	ld hl, rBLOCK_VISIBILITY
+
 	ld de, $26cf
 	ld c, $02
 	call func_1776
@@ -3537,6 +3542,7 @@ func_1517:
 l_1521:
 	ld [$dfe8], a
 	ret
+;MENU_SELECT_TYPE
 	ld de, rNEXT_BLOCK_VISIBILITY
 	call func_1766
 	ld hl, $ffc0
@@ -3599,22 +3605,24 @@ l_1572:
 l_1577:
 	ld a, $0f
 	jr l_1572
+
+;MENU_LEVEL_A_INIT
 	call WAIT_FOR_VBLANK
 	ld de, $4e3f
-	call COPY_TILEMAP
-	call func_18fc
-	call CLEAR_OAM_DATA
+	;call COPY_TILEMAP
+	;call func_18fc
+	;call CLEAR_OAM_DATA
 	ld hl, rBLOCK_VISIBILITY
 	ld de, $26db
 	ld c, $01
-	call func_1776
+	;call func_1776
 	ld de, rBLOCK_Y
 	ldh a, [rLEVEL_A]
 	ld hl, $1615
-	call func_174e
-	call func_2671
-	call func_1795
-	call func_18ca
+	;call func_174e
+	;call func_2671
+	;call func_1795
+	;call func_18ca
 	ld a, $d3
 	ldh [$ff00 + $40], a
 	ld a, $11
@@ -3631,14 +3639,18 @@ l_15ba:
 l_15bc:
 	ldh [rGAME_STATUS], a
 	ret
+
+SECTION "MENU_LEVEL_A", ROM0 [$15bf]
+; MENU_LEVEL_A
+
 	ld de, rBLOCK_VISIBILITY
 	call func_1766
 	ld hl, $ffc2
 	ld a, $0a
 	bit 3, b
 	; AP always skip
-	;jr l_15bc
-	jr nz, l_15bc
+	jr l_15bc
+	;jr nz, l_15bc
 	bit 0, b
 	jr nz, l_15bc
 	ld a, $08
@@ -6664,7 +6676,10 @@ l_2660:
 
 
 func_2671:
-	ld a, $02
+; This makes "TYPE A" not appear over MOD BY ALCHAV
+; I can't explain why, and this func is called by many placed,
+; Keep an eye on this if bugs are found.
+	ld a, $01
 
 
 func_2673:
@@ -7956,12 +7971,9 @@ SECTION "Data2", romx
 	db $0A, $16, $2F, $0B, $22, $2F, $0A, $15, $0E, $21, $0E, $22
 	db $2F, $19, $0A, $23, $11, $12, $1D, $17, $18, $1F, $9D, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F
-	db $2F, $2F, $2F, $2F, $2F, $2F, $2F
-
-	db $13, $0A, $15, $0C, $11, $0A, $1F, $20, $0A, $1B, $0E, $2F, $19, $1B, $0E, $1C, $0E, $17, $1D, $1C
-
-
-	db $5A, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B
+	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $8E, $8E, $8E, $8E, $8E
+	db $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E
+	db $8E, $8E, $8E, $5A, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B
 	db $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5C, $5D
 	db $80, $81, $82, $83, $90, $91, $92, $81, $82, $83, $90, $6C
 	db $6D, $6E, $6F, $70, $71, $72, $5E, $5D, $84, $85, $86, $87
@@ -7982,28 +7994,33 @@ SECTION "Data2", romx
 	db $4A, $4B, $4C, $4D, $42, $43, $8E, $8E, $8C, $8C, $8C, $8C
 	db $8C, $8C, $8C, $8C, $54, $55, $56, $57, $4E, $4F, $50, $51
 	db $52, $45, $8E, $41, $41, $41, $41, $41, $41, $41, $41, $41
-	db $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $2F
-	db $2F, $2F, $2F, $2F, $0A, $1B, $0C, $11, $12, $19, $0E, $15
-	db $0A, $10, $18, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $9A
-	db $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $2F
-	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $33, $30, $31, $32, $31
-	db $2F, $34, $35, $36, $37, $38, $39, $2F, $2F, $2F, $2F, $2F
-	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F
-	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $47, $48, $48, $48, $48
+	db $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $41,
+
+	db $13, $0A, $15, $0C, $11, $0A, $1F, $20, $0A, $1B, $0E, $2F, $19, $1B, $0E, $1C, $0E, $17, $1D, $1C
+
+
+	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F
+	db $2F, $2F, $2F, $2F, $2F, $0A, $1B, $0C, $11, $12, $19, $0E, $15, $0A, $10, $18, $2F, $2F, $2F, $2F
+	db $2F, $2F, $2F, $2F, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $2F, $2F, $2F, $2F
+	;db $2F, $2F, $2F, $2F, $33, $30, $31, $32, $31, $2F, $34, $35, $36, $37, $38, $39, $2F, $2F, $2F, $2F
+	db $47, $48, $48, $48, $48
 	db $48, $48, $48, $48, $48, $48, $48, $48, $48, $48, $48, $48
 	db $48, $48, $49, $4A, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C
-	db $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $4B, $4A
-	db $2C, $2C, $2C, $50, $51, $51, $51, $51, $51, $51, $51, $51
-	db $51, $52, $2C, $2C, $2C, $2C, $4B, $4A, $2C, $2C, $2C, $53
-	db $10, $0A, $16, $0E, $2F, $1D, $22, $19, $0E, $54, $2C, $2C
-	db $2C, $2C, $4B, $4A, $2C, $55, $56, $6D, $58, $58, $58, $58
-	db $58, $A9, $58, $58, $58, $6E, $56, $56, $5A, $2C, $4B, $4A
-	db $2C, $5B, $78, $77, $7E, $7F, $9A, $9B, $2F, $AA, $79, $77
-	db $7E, $7F, $9A, $9B, $5C, $2C, $4B, $4A, $2C, $2D, $4F, $4F
-	db $4F, $4F, $4F, $4F, $4F, $AC, $4F, $4F, $4F, $4F, $4F, $4F
-	db $2E, $2C, $4B, $4A, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C
-	db $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $4B, $4A
-	db $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C
+	db $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $4B
+
+;GAME MODE
+	db $4A, $2C, $2C, $2C, $50, $51, $51, $51, $51, $51, $51, $51, $51, $51, $51, $51, $52, $2C, $2C, $4B
+
+	db $4A, $2C, $2C, $2C, $53, $0A, $1B, $0C, $11, $12, $19, $0E, $15, $0A, $10, $18, $54, $2C, $2C, $4B
+
+	db $4A, $2C, $2C, $55, $6D, $58, $58, $58, $58, $58, $58, $58, $58, $58, $58, $58, $6E, $5A, $2C, $4B
+; A TYPE B TYPE
+	db $4A, $2C, $2C, $5B, $16, $18, $0D, $2F, $0B, $22, $2F, $0A, $15, $0C, $11, $0A, $1F, $5C, $2C, $4B
+
+	db $4A, $2C, $2C, $2D, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $4F, $2E, $2C, $4B
+
+	db $4A, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $4B
+	db $4A, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C, $2C
 	db $2C, $2C, $2C, $2C, $2C, $2C, $4B, $4A, $2C, $2C, $2C, $50
 	db $51, $51, $51, $51, $51, $51, $51, $51, $51, $51, $52, $2C
 	db $2C, $2C, $4B, $4A, $2C, $2C, $2C, $53, $16, $1E, $1C, $12
