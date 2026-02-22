@@ -5456,7 +5456,7 @@ func_2007:
 	ld hl, rBLOCK_VISIBILITY
 	ld [hl], $00
 	inc l
-	ld [hl], $18
+	ld [hl], $10
 	inc l
 	ld [hl], $3f
 	inc l
@@ -6346,7 +6346,7 @@ func_24bb:
 	ld a, [hl]
 	and $03
 	jr z, .block_variation_low_end	; jump if block type MOD 4 = 0 (lowest variation of block)
-	
+
 	dec [hl]			; change to lower variation (rotate clockwise)
 	
 	jr .rotation_finished
@@ -6363,7 +6363,7 @@ func_24bb:
 	and $03
 	cp $03
 	jr z, .block_variation_high_end	; jump if block type MOD 4 = 3 (highest variation of block)
-	
+
 	inc [hl]			; change to higher variation (rotate counter-clockwise)
 	
 	jr .rotation_finished
@@ -7956,9 +7956,12 @@ SECTION "Data2", romx
 	db $0A, $16, $2F, $0B, $22, $2F, $0A, $15, $0E, $21, $0E, $22
 	db $2F, $19, $0A, $23, $11, $12, $1D, $17, $18, $1F, $9D, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F
-	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $8E, $8E, $8E, $8E, $8E
-	db $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E, $8E
-	db $8E, $8E, $8E, $5A, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B
+	db $2F, $2F, $2F, $2F, $2F, $2F, $2F
+
+	db $13, $0A, $15, $0C, $11, $0A, $1F, $20, $0A, $1B, $0E, $2F, $19, $1B, $0E, $1C, $0E, $17, $1D, $1C
+
+
+	db $5A, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B
 	db $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5B, $5C, $5D
 	db $80, $81, $82, $83, $90, $91, $92, $81, $82, $83, $90, $6C
 	db $6D, $6E, $6F, $70, $71, $72, $5E, $5D, $84, $85, $86, $87
@@ -7981,9 +7984,9 @@ SECTION "Data2", romx
 	db $52, $45, $8E, $41, $41, $41, $41, $41, $41, $41, $41, $41
 	db $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $41, $2F
 	db $2F, $2F, $2F, $2F, $0A, $1B, $0C, $11, $12, $19, $0E, $15
-	db $0A, $10, $18, $2F, $2F, $2F, $2F, $2F, $9A, $9A, $9A, $9A
-	db $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A
-	db $9A, $9A, $2F, $2F, $2F, $2F, $2F, $33, $30, $31, $32, $31
+	db $0A, $10, $18, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $9A
+	db $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $9A, $2F
+	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $33, $30, $31, $32, $31
 	db $2F, $34, $35, $36, $37, $38, $39, $2F, $2F, $2F, $2F, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $47, $48, $48, $48, $48
