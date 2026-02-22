@@ -5456,7 +5456,7 @@ func_2007:
 	ld hl, rBLOCK_VISIBILITY
 	ld [hl], $00
 	inc l
-	ld [hl], $10
+	ld [hl], $18
 	inc l
 	ld [hl], $3f
 	inc l
