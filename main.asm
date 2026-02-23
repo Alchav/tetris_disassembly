@@ -1164,18 +1164,21 @@ l_0670:
 	ld hl, $ff02
 	set 7, [hl]
 	jr l_0696
-	;MENU_VS_INIT
-	ld a, $03
-	ldh [$ff00 + $cd], a
-	ldh a, [$ff00 + $cb]
-	cp $29
-	jr nz, l_0670
-	call func_0aa1
-	call func_0aa1
-	call func_0aa1
-	ld b, $00
-	ld hl, $c300
 
+SECTION "MENU_VS_INIT", ROM0 [$0677]
+CHECK_FORCED_LOCK:
+    jp nz, l_259a
+    push hl
+    ld hl, $CC11
+    ld a, [hl]
+    and a
+    ld [hl], $00
+    pop hl
+    jp z, NO_FORCED_LOCK
+    jp l_259a
+
+
+SECTION "l_068f", ROM0 [$068F]
 l_068f:
 	call func_0aa1
 	ldi [hl], a
@@ -1254,19 +1257,20 @@ func_0725:
 	jr nz, func_0725
 	ret
 ; MENU_VS_MODE
-	ldh a, [$ff00 + $cb]
-	cp $29
-	jr z, l_0755
-	ldh a, [$ff00 + $cc]
-	and a
-	jr z, l_074a
-	ldh a, [$ff00 + $d0]
-	cp $60
-	jr z, l_076a
-	cp $06
-	jr nc, l_0743
-	ldh [$ff00 + $ac], a
 
+CHECK_FORCED_LINE_CLEAR:
+    ld a, b
+    ld h, $CC
+    ld l, a
+    ld a, [hl]
+    ld [hl], 0
+    cp 01
+    jp z, FORCED_LINE_CLEAR
+    jp l_21d8
+
+
+
+SECTION "l_0743", ROM0 [$0743]
 l_0743:
 	ldh a, [$ff00 + $ad]
 	ldh [rSB_DATA], a
@@ -5707,8 +5711,10 @@ l_2153:
 
 l_2156:
 	ldi a, [hl]
+	; Check for any empty tile
 	cp $2f
-	jp z, l_21d8
+	jp z, CHECK_FORCED_LINE_CLEAR ;l_21d8
+FORCED_LINE_CLEAR:
 	dec c
 	jr nz, l_2156
 	pop hl
@@ -6494,9 +6500,11 @@ l_2578:
 	ld h, a
 	ld a, [hl]
 	cp $2f
-	jr nz, l_259a
+	;jr nz, l_259a
 	pop bc
 	pop hl
+	jp CHECK_FORCED_LOCK
+NO_FORCED_LOCK:
 	inc l
 	inc l
 	dec b
@@ -6508,12 +6516,12 @@ l_2596:
 	ret
 
 l_259a:
-	pop bc
-	pop hl
+
 	ld a, $01
 	ldh [$ff00 + $9b], a
 	ret
 
+SECTION "l_25a1", ROM0 [$25A1]
 
 func_25a1:
 	ldh a, [rBLOCK_STATUS]
