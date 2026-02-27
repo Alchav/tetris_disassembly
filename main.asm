@@ -618,7 +618,6 @@ lbl_MENU_TITLE_INIT::
 	ldh [rCLEAR_PROGRESS], a
 	ldh [$ff00 + $9b], a
 	ldh [$ff00 + $fb], a
-	ldh [rLINES_CLEARED2], a
 	ldh [rROW_UPDATE], a
 	ldh [$ff00 + $c7], a
 	call func_2293
@@ -627,6 +626,7 @@ lbl_MENU_TITLE_INIT::
 	ld hl, $c800
 l_03ce:
 	ld a, $2f
+	ldh [rLINES_CLEARED2], a
 	ldi [hl], a
 	ld a, h
 	cp $cc
@@ -1418,7 +1418,9 @@ l_0828:
 	ldh [rCLEAR_PROGRESS], a
 	ldh [$ff00 + $9b], a
 	ldh [$ff00 + $fb], a
-	ldh [rLINES_CLEARED2], a
+	;ldh [rLINES_CLEARED2], a
+	nop
+	nop
 	ldh [$ff00 + $cc], a
 	ldh [rSB], a
 	ldh [rREQUEST_SERIAL_TRANSFER], a
@@ -1434,7 +1436,9 @@ l_0828:
 	ld de, $537c
 	push de
 	ld a, $01
-	ldh [$ff00 + $a9], a
+	;ldh [$ff00 + $a9], a
+	nop
+	nop
 	ldh [rPLAYERS], a
 	call COPY_TILEMAP
 
@@ -1454,6 +1458,7 @@ l_085e:
 	call func_26b6
 	ld hl, $9951
 	ld a, $30
+	; idk what's happening here
 	ldh [rLINES_CLEARED1], a
 	ld [hl], $00
 	dec l
@@ -4472,8 +4477,8 @@ func_19ff:
 	ldh [rCLEAR_PROGRESS], a
 	ldh [$ff00 + $9b], a
 	ldh [$ff00 + $fb], a
-	ldh [rLINES_CLEARED2], a
 	ld a, $2f
+	ldh [rLINES_CLEARED2], a
 	call func_1fd7
 	call func_1ff2
 	call func_2651
@@ -4494,7 +4499,9 @@ l_1a3f:
 	push de
 	ldh [$ff00 + $e6], a
 	ld a, [hl]
-	ldh [$ff00 + $a9], a
+	;ldh [$ff00 + $a9], a
+	nop
+	nop
 	call COPY_TILEMAP
 	pop de
 	ld hl, $9c00
@@ -4506,7 +4513,8 @@ l_1a3f:
 	ld h, $98
 	ldh a, [$ff00 + $e6]
 	ld l, a
-	ldh a, [$ff00 + $a9]
+	; AP blank multiplier
+	ld a, $2F
 	ld [hl], a
 	ld h, $9c
 	ld [hl], a
@@ -4529,11 +4537,14 @@ l_1a71:
 	ldh a, [$ff00 + $c0]
 	cp $77
 	ld a, $25
-	jr z, l_1a8f
+	;jr z, l_1a8f
+	jr l_1a98
 	xor a
 
 l_1a8f:
-	ldh [rLINES_CLEARED1], a
+	;ldh [rLINES_CLEARED1], a
+	nop
+	nop
 	and $0f
 	ldd [hl], a
 	jr z, l_1a98
@@ -5027,7 +5038,9 @@ l_1d66:
 	call func_2696
 	call Sound_Init
 	ld a, $25
-	ldh [rLINES_CLEARED1], a
+	;ldh [rLINES_CLEARED1], a
+	nop
+	nop
 	ld a, $0b
 	ldh [rGAME_STATUS], a
 	ret
@@ -5142,7 +5155,9 @@ l_1e18:
 	add a, $0a
 	ld [$dfe8], a
 	ld a, $25
-	ldh [rLINES_CLEARED1], a
+	;ldh [rLINES_CLEARED1], a
+	nop
+	nop
 	ld a, $1b
 	ldh [rCOUNTDOWN], a
 	ld a, $23
@@ -5750,15 +5765,21 @@ l_216b:
 	ld a, b
 	add a, [hl]
 	daa
-	ldi [hl], a
+	;ldi [hl], a
+	nop
 	ld a, $00
 	adc a, [hl]
 	daa
-	ld [hl], a
+	;ld [hl], a
+	nop
 	jr nc, l_21aa
-	ld [hl], $99
+	;ld [hl], $99
+	nop
+	nop
 	dec hl
-	ld [hl], $99
+	;ld [hl], $99
+	nop
+	nop
 	jr l_21aa
 
 l_219b:
@@ -5806,7 +5827,9 @@ l_21d8:
 
 l_21db:
 	xor a
-	ldh [rLINES_CLEARED1], a
+	;ldh [rLINES_CLEARED1], a
+	nop
+	nop
 	jr l_21aa
 
 
@@ -6195,7 +6218,10 @@ l_23e9:
 	ld de, $ff9e
 	ld c, $01
 l_23ff:
-	call func_2a3c
+	;call func_2a3c
+	nop
+	nop
+	nop
 	ldh a, [rGAME_TYPE]
 	cp GAME_TYPE_A
 	jr z, l_242b
@@ -6254,7 +6280,7 @@ func_243b:
 func_244b:
 	ldh a, [rGAME_STATUS]
 	and a
-	ret nz
+	ret
 	ldh a, [$ff00 + $c0]
 	cp $37
 	ret nz
@@ -7713,12 +7739,12 @@ SECTION "Data", ROM0 [$2B64]
 	db $34, $34, $34, $2A, $7D, $2F, $2F, $2F, $2F, $2F, $2F, $2F
 	db $2F, $2F, $2F, $7D, $30, $31, $31, $31, $31, $31, $32, $2A
 	db $7B, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $7B
-	db $36, $15, $0E, $1F, $0E, $15, $37, $2A, $7C, $2F, $2F, $2F
+	db $36, $16, $1E, $15, $1D, $12, $37, $2A, $7C, $2F, $2F, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $7C, $36, $2F, $2F, $2F
 	db $2F, $2F, $37, $2A, $7D, $2F, $2F, $2F, $2F, $2F, $2F, $2F
 	db $2F, $2F, $2F, $7D, $40, $42, $42, $42, $42, $42, $41, $2A
 	db $7B, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $2F, $7B
-	db $36, $15, $12, $17, $0E, $1C, $37, $2A, $7C, $2F, $2F, $2F
+	db $36, $1C, $19, $0E, $0E, $0D, $37, $2A, $7C, $2F, $2F, $2F
 	db $2F, $2F, $2F, $2F, $2F, $2F, $2F, $7C, $36, $2F, $2F, $2F
 	db $2F, $2F, $37, $2A, $7D, $2F, $2F, $2F, $2F, $2F, $2F, $2F
 	db $2F, $2F, $2F, $7D, $33, $34, $34, $34, $34, $34, $35, $2A
