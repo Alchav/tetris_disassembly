@@ -3710,34 +3710,26 @@ l_160d:
 	db $40, $30, $40, $40, $40, $50, $40, $60, $40, $70, $50, $30,
 	db $50, $40, $50, $50, $50, $60, $50, $70
 
-	call WAIT_FOR_VBLANK
-	ld de, $4fa7
-	call COPY_TILEMAP
-	call CLEAR_OAM_DATA
-	ld hl, rBLOCK_VISIBILITY
-	ld de, $26e1
-	ld c, $02
-	call func_1776
-	ld de, rBLOCK_Y
-	ldh a, [$ff00 + $c3]
-	ld hl, $16d2
-	call func_174e
-	ld de, rNEXT_BLOCK_Y
-	ldh a, [rINITIAL_HEIGHT]
-	ld hl, $1741
-	call func_174e
-	call func_2671
-	call func_17af
-	call func_18ca
-	ld a, $d3
-	ldh [$ff00 + $40], a
-	ld a, $13
-	ldh [rGAME_STATUS], a
-	ldh a, [$ff00 + $c7]
-	and a
-	jr nz, l_1670
-	call func_1517
-	ret
+; MENU_LEVEL_B_INIT
+
+CHECK_GHOST:
+
+	ld d, a
+    ld a, [$CC12]
+    cp 0
+    jr nz, .dec_and_ret
+	ldi a, [hl]
+    ld [de], a
+    jp CHECK_GHOST_RETURN
+.dec_and_ret:
+    inc hl
+    dec a
+    ld [$CC12], a
+    jp CHECK_GHOST_RETURN
+
+
+
+SECTION "l_1670", ROM0 [$1670]
 
 l_1670:
 	ld a, $15
@@ -5338,17 +5330,9 @@ l_1f37:
 	ldh a, [$ff00 + $c0]
 	cp $37
 	jr nz, l_1f6c
-	ld hl, $c0a2
-	ld a, [hl]
-	ld b, $58
-	cp $20
-	jr nc, l_1f71
-	inc b
-	cp $15
-	jr nc, l_1f71
-	inc b
-	cp $10
-	jr nc, l_1f71
+	ld a, [$cc13]
+	and a
+	jr nz, l_1f71
 
 l_1f6c:
 	ld a, $04
@@ -5358,13 +5342,17 @@ l_1f6e:
 	ret
 
 l_1f71:
-	ld a, b
+    xor a
+    ld [$cc13], a
+	ld a, $58
 	ldh [$ff00 + $f3], a
 	ld a, $90
 	ldh [rCOUNTDOWN], a
 	ld a, $34
 	ldh [rGAME_STATUS], a
 	ret
+
+SECTION "func_1f7d", ROM0 [$1f7d]
 
 func_1f7d:
 	ld b, $08
@@ -6579,12 +6567,18 @@ l_25bd:
 	ld [de], a
 	ld a, d
 	add a, $30
-	ld d, a
-	ldi a, [hl]
-	ld [de], a
+	;ld d, a
+	;ldi a, [hl]
+	;ld [de], a
+	jp CHECK_GHOST
+CHECK_GHOST_RETURN:
 	inc l
 	dec b
 	jr nz, l_25ab
+
+    ;this continues on, empty space will be filled with $00 which is NOP
+
+SECTION "l_25cf", ROM0 [$25cf]
 
 l_25cf:
 	ld a, $02
