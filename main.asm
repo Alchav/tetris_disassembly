@@ -625,7 +625,7 @@ lbl_MENU_TITLE_INIT::
 	call COPY_TITLE_TILES
 	ld hl, $c800
 l_03ce:
-	ld a, $2f
+	ld a, $8e ; make the outside of the game area solid
 	ldh [rLINES_CLEARED2], a
 	ldi [hl], a
 	ld a, h
