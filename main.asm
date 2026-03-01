@@ -829,7 +829,7 @@ first_player_selected:
 	push af
 	ldh a, [rBUTTON_DOWN]
 	bit BTN_DOWN, a
-	jr z, .skip_hard_mode	; set hard mode only if (Start + Down) are pressed.
+	jr .skip_hard_mode	; set hard mode only if (Start + Down) are pressed.
 	ldh [rHARD_MODE], a
 .skip_hard_mode:
 	pop af
