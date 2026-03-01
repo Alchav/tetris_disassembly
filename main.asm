@@ -788,7 +788,8 @@ lbl_MENU_TITLE::
 	jr nz, MENU_TITLE_LEFT_BTN
 	
 	bit BTN_START, b
-	ret z			; Return if no relevant button was pressed
+.Archipelago_Enable_Game_Ret_Z
+	ret 			; Return if no relevant button was pressed
 	
 	and a
 	ld a, $08
