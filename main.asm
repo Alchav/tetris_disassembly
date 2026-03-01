@@ -4616,8 +4616,10 @@ l_1afa:
 	ldh [rGRAVITY], a
 	ldh [$ff00 + $9a], a
 	ret
-	START_SELECT_HANDLER_X:
-
+START_SELECT_HANDLER_X:
+    ldh a, [rPAUSE_MENU]
+    and a
+    jp nz, START_SELECT_HANDLER
     ld a, [$cc00]
     and a
     ret nz
