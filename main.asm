@@ -4471,11 +4471,12 @@ func_19ff:
 	ldh [$ff00 + $9b], a
 	ldh [$ff00 + $fb], a
 	ld a, $2f
-	ldh [rLINES_CLEARED2], a
+	;ldh [rLINES_CLEARED2], a
 	call func_1fd7
 	call func_1ff2
 	call func_2651
 	xor a
+	ld [$CC00], a
 	ldh [rROW_UPDATE], a
 	call CLEAR_OAM_DATA
 	ldh a, [$ff00 + $c0]
