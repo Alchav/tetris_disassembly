@@ -4463,6 +4463,8 @@ func_19ff:
 	jr nz, $19ff
 	ld [hl], b
 	ret
+
+; MENU_IN_GAME_INIT:
 	call WAIT_FOR_VBLANK
 	xor a
 	ld [rNEXT_BLOCK_VISIBILITY], a
@@ -4494,7 +4496,6 @@ l_1a3f:
 	ldh [$ff00 + $e6], a
 	ld a, [hl]
 	;ldh [$ff00 + $a9], a
-	nop
 	nop
 	call COPY_TILEMAP
 	pop de
@@ -4612,6 +4613,7 @@ l_1afa:
 	;add hl, de
 	;ld a, [hl]
 	; AP speed multiplier
+.Archipelago_Speed_1
 	ld a, $34
 	ldh [rGRAVITY], a
 	ldh [$ff00 + $9a], a
@@ -4627,7 +4629,7 @@ START_SELECT_HANDLER_X:
 
 	;db $34, $30, $2C, $28, $24, $20, $1B, $15, $10, $0A, $09, $08
 	;db $07, $06, $05, $05, $04, $04, $03, $03, $02
-
+SECTION "func_1b1b", ROM0 [$1b1b]
 func_1b1b:
 	ld hl, $99c2
 	ld de, $1b40
@@ -5300,6 +5302,9 @@ func_1ed7:
 l_1f12:
 	call func_25d9
 	ret
+
+
+
 	ldh a, [rBUTTON_HIT]
 	and a
 	ret z
@@ -5413,6 +5418,7 @@ func_1f91:
 l_1fc3:
 	ld [hl], $00
 	; AP score multiplier
+.Archipelago_Score_Multiplier_1
 	ld a, 0
 	ld b, a
 	inc b
@@ -5720,11 +5726,11 @@ l_2156:
 	ldi a, [hl]
 	; Check for any empty tile
 	cp $2f
-	jp z, CHECK_FORCED_LINE_CLEAR ;l_21d8
+	jp z, CHECK_FORCED_LINE_CLEAR ;l_21d8 ; not clearing line
 FORCED_LINE_CLEAR:
-	dec c
+	dec c ; check next tile in row
 	jr nz, l_2156
-	pop hl
+	pop hl ; clear row
 	ld a, h
 	ld [de], a
 	inc de
@@ -5734,12 +5740,18 @@ FORCED_LINE_CLEAR:
 	ldh a, [$ff00 + $a0]
 	inc a
 	ldh [$ff00 + $a0], a
+	cp 4
+	jr nz, l_216b
+	ld a, $03
+	ldh [rBLOCK_STATUS], a
+    ret
 
 l_216b:
 	push de
 	ld de, $0020
 	add hl, de
 	pop de
+
 	dec b
 	jr nz, l_2153
 	ld a, $03
@@ -5758,20 +5770,17 @@ l_216b:
 	add a, [hl]
 	daa
 	;ldi [hl], a
-	nop
 	ld a, $00
 	adc a, [hl]
 	daa
 	;ld [hl], a
-	nop
+	;nop
 	jr nc, l_21aa
 	;ld [hl], $99
-	nop
-	nop
+
 	dec hl
 	;ld [hl], $99
-	nop
-	nop
+
 	jr l_21aa
 
 l_219b:
@@ -5818,13 +5827,11 @@ l_21d8:
 	jr l_216b
 
 l_21db:
-	xor a
+	;xor a
 	;ldh [rLINES_CLEARED1], a
-	nop
-	nop
 	jr l_21aa
 
-
+SECTION "clear_row_animation", ROM0 [$21e0]
 ; When rows are completed (and RAM values $c0a3 to $c0aa are set to indicate where)
 ; - Between every state change a countdown of 10 draw cycles (~ 0.15 secs) is run.
 ; - Function kicks off with rBLOCK_STATUS set to 3
