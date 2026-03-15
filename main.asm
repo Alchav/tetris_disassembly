@@ -5742,9 +5742,10 @@ FORCED_LINE_CLEAR:
 	ldh [$ff00 + $a0], a
 	cp 4
 	jr nz, l_216b
-	ld a, $03
-	ldh [rBLOCK_STATUS], a
-    ret
+	jr skip_when_four_lines
+	;ld a, $03
+	;ldh [rBLOCK_STATUS], a
+    ;ret
 
 l_216b:
 	push de
@@ -5754,6 +5755,7 @@ l_216b:
 
 	dec b
 	jr nz, l_2153
+skip_when_four_lines:
 	ld a, $03
 	ldh [rBLOCK_STATUS], a
 	dec a
